@@ -1,6 +1,7 @@
 package rmi;
 
 import java.net.*;
+import java.rmi.Remote
 
 /** RMI stub factory.
 
@@ -15,7 +16,7 @@ import java.net.*;
     same interface and carry the same remote server address - and would
     therefore connect to the same skeleton. Stubs are serializable.
  */
-public abstract class Stub
+public abstract class Stub extends Remote
 {
     /** Creates a stub, given a skeleton with an assigned adress.
 
@@ -48,6 +49,7 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton)
         throws UnknownHostException
     {
+        // TODO:
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -84,6 +86,7 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton,
                                String hostname)
     {
+        // TODO:
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -104,8 +107,19 @@ public abstract class Stub
                       <code>RMIException</code>, or if an object implementing
                       this interface cannot be dynamically created.
      */
-    public static <T> T create(Class<T> c, InetSocketAddress address)
+    public static boolean equals(<T> T other)
     {
-        throw new UnsupportedOperationException("not implemented");
+        // TODO:
+    }
+
+    @Override
+    public static int hashCode()
+    {
+        // TODO:
+    }
+
+    public static String toString()
+    {
+        // TODO:
     }
 }

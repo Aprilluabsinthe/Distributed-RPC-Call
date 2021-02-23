@@ -1,7 +1,12 @@
 package rmi;
 
 import java.net.*;
-
+import java.net.http.WebSocket;
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.io.*;
+import java.io.Serializable;
+import rmi.thread.*;
 /** RMI skeleton
 
     <p>
@@ -24,8 +29,15 @@ import java.net.*;
     a class from <code>Skeleton</code> and overriding <code>listen_error</code>
     or <code>service_error</code>.
 */
-public class Skeleton<T>
+public class Skeleton<T> implements Serializable
 {
+    // TODO:
+    @Serial
+    private static final long serialVersionUID = 1L;
+    private Class<T> c;
+    private T server;
+    private InetSocketAddress address;
+
     /** Creates a <code>Skeleton</code> with no initial server address. The
         address will be determined by the system when <code>start</code> is
         called. Equivalent to using <code>Skeleton(null)</code>.
@@ -47,7 +59,21 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server)
     {
-        throw new UnsupportedOperationException("not implemented");
+        if(c == null || server == null){
+            throw new NullPointerException("interface or server is null");
+        }
+        if( !c.isInterface() ){
+            throw new Error("interface is not remote");
+        }
+        try{
+            this.c = c;
+            this.server = server;
+        }
+        catch(){
+            throw new UnsupportedOperationException("not implemented");
+        }
+
+
     }
 
     /** Creates a <code>Skeleton</code> with the given initial server address.
@@ -70,6 +96,7 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
+        // TODO:
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -93,6 +120,7 @@ public class Skeleton<T>
      */
     protected void stopped(Throwable cause)
     {
+        // TODO:
     }
 
     /** Called when an exception occurs at the top level in the listening
@@ -112,6 +140,7 @@ public class Skeleton<T>
      */
     protected boolean listen_error(Exception exception)
     {
+        // TODO:
         return false;
     }
 
@@ -124,6 +153,7 @@ public class Skeleton<T>
      */
     protected void service_error(RMIException exception)
     {
+        // TODO:
     }
 
     /** Starts the skeleton server.
@@ -141,6 +171,7 @@ public class Skeleton<T>
      */
     public synchronized void start() throws RMIException
     {
+        // TODO:
         throw new UnsupportedOperationException("not implemented");
     }
 
@@ -155,6 +186,7 @@ public class Skeleton<T>
      */
     public synchronized void stop()
     {
+        // TODO:
         throw new UnsupportedOperationException("not implemented");
     }
 }
