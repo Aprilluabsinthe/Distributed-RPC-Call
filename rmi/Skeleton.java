@@ -6,7 +6,10 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.io.*;
 import java.io.Serializable;
-import rmi.thread.*;
+import java.lang.reflect.*;
+import java.util.Arrays;
+import java.util.List;
+
 /** RMI skeleton
 
     <p>
@@ -29,7 +32,7 @@ import rmi.thread.*;
     a class from <code>Skeleton</code> and overriding <code>listen_error</code>
     or <code>service_error</code>.
 */
-public class Skeleton<T> implements Serializable
+public class Skeleton<T>
 {
     // TODO:
     @Serial
@@ -37,6 +40,7 @@ public class Skeleton<T> implements Serializable
     private Class<T> c;
     private T server;
     private InetSocketAddress address;
+    ServerSocket listener;
 
     /** Creates a <code>Skeleton</code> with no initial server address. The
         address will be determined by the system when <code>start</code> is
@@ -65,15 +69,22 @@ public class Skeleton<T> implements Serializable
         if( !c.isInterface() ){
             throw new Error("interface is not remote");
         }
+        // if every method throws RMIExeption
+        Method[] selfmethods = c.getDeclaredMethods();
+        for(int i = 0 ; i < selfmethods.length; i++){
+            Class<?>[] exceptionsArr = selfmethods[i].getExceptionTypes();
+            List<Class<?>> exceptionsList = Arrays.asList(exceptionsArr);
+            if (!exceptionsList.contains(RMIException.class)){
+                throw new Error("Methods do not throw RMIException");
+            }
+        }
         try{
             this.c = c;
             this.server = server;
         }
-        catch(){
+        catch (Exception e) {
             throw new UnsupportedOperationException("not implemented");
         }
-
-
     }
 
     /** Creates a <code>Skeleton</code> with the given initial server address.
@@ -96,8 +107,38 @@ public class Skeleton<T> implements Serializable
      */
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
-        // TODO:
-        throw new UnsupportedOperationException("not implemented");
+        // TODO: check every method throws RMIException
+        if(c == null || server == null || address == null){
+            throw new NullPointerException("interface or server or address is null");
+        }
+        if( !c.isInterface() ){
+            throw new Error("interface is not remote");
+        }
+        // if every method throws RMIExeption
+        Method[] selfmethods = c.getDeclaredMethods();
+        for(int i = 0 ; i < selfmethods.length; i++){
+            Class<?>[] exceptionsArr = selfmethods[i].getExceptionTypes();
+            List<Class<?>> exceptionsList = Arrays.asList(exceptionsArr);
+            if (!exceptionsList.contains(RMIException.class)){
+                throw new Error("Methods do not throw RMIException");
+            }
+        }
+        try{
+            this.c = c;
+            this.server = server;
+            this.address = address;
+        }
+        catch (Exception e) {
+            throw new UnsupportedOperationException("not implemented");
+        }
+    }
+
+    /**
+     * get the address in a skeleton
+     * @return address
+     */
+    public InetSocketAddress getAddress() {
+        return address;
     }
 
     /** Called when the listening thread exits.
