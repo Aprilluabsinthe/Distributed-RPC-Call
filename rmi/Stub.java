@@ -16,7 +16,7 @@ import java.rmi.Remote
     same interface and carry the same remote server address - and would
     therefore connect to the same skeleton. Stubs are serializable.
  */
-public abstract class Stub extends Remote
+public abstract class Stub
 {
     /** Creates a stub, given a skeleton with an assigned adress.
 
