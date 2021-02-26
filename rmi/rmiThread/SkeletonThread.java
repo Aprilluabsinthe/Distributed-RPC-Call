@@ -1,6 +1,11 @@
 package rmi.rmiThread;
 
-import java.io.*;
+import rmi.Skeleton;
+
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -8,15 +13,12 @@ import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
-import rmi.Skeleton;
-
 /**
     ref: https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html
  https://web.mit.edu/6.005/www/fa15/classes/23-locks/
  https://www.geeksforgeeks.org/introducing-threads-socket-programming-java/
 */
 public class SkeletonThread<T> extends Thread implements Serializable {
-    @Serial
     private static final long serialVersionUID = 4890265821034549516L;
     private ServerSocket ss;
     private int port;
