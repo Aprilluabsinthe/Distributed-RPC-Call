@@ -1,11 +1,7 @@
 package rmi;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
-import java.util.Arrays;
-import java.util.List;
-import rmi.Helper.Helper;
 
 import static rmi.Helper.Helper.allThrowRMIExceptions;
 
@@ -24,8 +20,6 @@ import static rmi.Helper.Helper.allThrowRMIExceptions;
  */
 public abstract class Stub<T>
 {
-    private static Class<T> c;
-    private static Skeleton<T> skeleton;
     /** Creates a stub, given a skeleton with an assigned adress.
 
         <p>
@@ -74,8 +68,6 @@ public abstract class Stub<T>
         }
 
         proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddress());
-        c = c;
-        skeleton = skeleton;
         return (T) Proxy.newProxyInstance(skeleton.getClassT().getClassLoader(), skeleton.getServer().getClass().getInterfaces(),stubHandler);
     }
 
@@ -158,46 +150,45 @@ public abstract class Stub<T>
             throw new Error("Methods do not throw RMIException");
         }
 
-        Skeleton skeleton = new Skeleton(InetSocketAddress address);
-        proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddress());
-        return (T) Proxy.newProxyInstance(skeleton.getClassT().getClassLoader(), skeleton.getServer().getClass().getInterfaces(),stubHandler);
+        proxyInvocationHandler stubHandler = new proxyInvocationHandler(address);
+        return (T) Proxy.newProxyInstance(c.getClassLoader(), new Class[]{c},stubHandler);
     }
 
     /** override equals method
         @param obj A <code>Object</code> to be compared to
         @return True if equals, False if not
      */
-    @Override
-    public boolean equals( Object obj) {
-        if ( obj == null ) return false;
-        if(obj instanceof Stub){
-            return ((Stub<?>) obj).getC() == c && ((Stub<?>) obj).getSkeleton() == skeleton;
-        }
-        return false;
-    }
+//    @Override
+//    public boolean equals( Object obj) {
+//        if ( obj == null ) return false;
+//        if(obj instanceof Stub){
+//            return ((Stub<?>) obj).getC() == c && ((Stub<?>) obj).getSkeleton() == skeleton;
+//        }
+//        return false;
+//    }
+//
+//    @Override
+//    public int hashCode()
+//    {
+//        int res = 17;
+//        res = res * 31 + c.hashCode();
+//        res = res * 31 + skeleton.hashCode();
+//        return res;
+//    }
+//
+//    @Override
+//    public String toString()
+//    {
+//        return c.getClass().getInterfaces() + skeleton.getAddress().getHostName() + skeleton.getAddress().getHostName();
+//    }
 
-    @Override
-    public int hashCode()
-    {
-        int res = 17;
-        res = res * 31 + c.hashCode();
-        res = res * 31 + skeleton.hashCode();
-        return res;
-    }
-
-    @Override
-    public String toString()
-    {
-        return c.getClass().getInterfaces() + skeleton.getAddress().getHostName() + skeleton.getAddress().getHostName();
-    }
-
-    public Class<T> getC() {
-        return c;
-    }
-
-    public Skeleton<T> getSkeleton() {
-        return skeleton;
-    }
+//    public Class<T> getC() {
+//        return c;
+//    }
+//
+//    public Skeleton<T> getSkeleton() {
+//        return skeleton;
+//    }
 }
 
 
