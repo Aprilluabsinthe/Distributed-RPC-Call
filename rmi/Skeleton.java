@@ -194,9 +194,9 @@ public class Skeleton<T>
     public synchronized void stop()
     {
         skeletonThread.stopThread();
-        while (skeletonThread.isAlive()) {
-
-        }
+        
+        //continue running
+        while (skeletonThread.isAlive()) { }
     }
 
     public Class<T> getClass() {
