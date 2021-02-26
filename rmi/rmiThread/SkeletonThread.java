@@ -1,13 +1,13 @@
 package rmi.rmiThread;
 
-import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.net.SocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+
 import rmi.Skeleton;
 
 /**
@@ -17,14 +17,15 @@ import rmi.Skeleton;
 */
 public class SkeletonThread<T> extends Thread implements Serializable {
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4890265821034549516L;
     private ServerSocket ss;
     private int port;
     private InetSocketAddress address;
-    private volatile boolean isRunning = false;
     private Skeleton<T> skeleton;
     private final Object lock = new Object();
-    private final ExecutorService clientProcessingPool = Executors.newFixedThreadPool(10);
+    Map<SocketAddress, ClientTask<T>> taskRegister = new HashMap<>();
+    private ObjectOutputStream objout = null;
+    private ObjectInputStream objin = null;
 
     /**
      * two constructive functions
@@ -57,6 +58,7 @@ public class SkeletonThread<T> extends Thread implements Serializable {
      * */
     @Override
     public void run(){
+        System.out.println("Run Server side Thread");
         Socket clientSocket = null;
         try {
             ss = new ServerSocket(port);
@@ -65,9 +67,8 @@ public class SkeletonThread<T> extends Thread implements Serializable {
                 synchronized(this.lock){
                     try{
                         clientSocket = ss.accept();
-                        Thread task = new ClientHandler<T>(skeleton,clientSocket);
-                        clientProcessingPool.submit(task);
-                        task.start();
+                        ClientTask<T> task = new ClientTask<T>(skeleton,clientSocket);
+                        taskRegister.put(clientSocket.getRemoteSocketAddress(), task);
                     }catch(Exception e){
                         System.err.println("Server side Socket error...");
                         e.printStackTrace();
@@ -78,9 +79,29 @@ public class SkeletonThread<T> extends Thread implements Serializable {
                 System.err.println("Unable to connect to Client...");
                 e.printStackTrace();
         }
-
-
     }
 
+    public void stopThread(){
+        System.out.println("Stop Server side Thread");
+        try{
+            ss.close();
+        } catch (IOException e) {
+            System.out.println("Stop Server side Thread IOError");
+            e.printStackTrace();
+        }
+        taskRegister.clear();
+        System.out.println("Stop successfully");
+    }
+
+    public void clearRegister(SocketAddress address){
+        try {
+            if (taskRegister.containsKey(address)) {
+                taskRegister.remove(address);
+            }
+        }catch (Exception e){
+            System.err.println("clearRegister error...");
+            e.printStackTrace();
+        }
+    }
 
 }
