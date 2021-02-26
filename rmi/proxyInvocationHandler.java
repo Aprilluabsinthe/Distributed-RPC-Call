@@ -8,15 +8,15 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler, Serializable {
+public class proxyInvocationHandler<T> implements java.lang.reflect.InvocationHandler, Serializable {
     private static final long serialVersionUID = 3141566360570749149L;
     private InetSocketAddress address;
 
-    public InvocationHandler(String address, int port){
+    public proxyInvocationHandler(String address, int port){
         this.address = InetSocketAddress.createUnresolved(address,port);
     }
 
-    public InvocationHandler(InetSocketAddress address){
+    public proxyInvocationHandler(InetSocketAddress address){
         this.address = address;
     }
 
