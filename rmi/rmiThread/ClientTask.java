@@ -64,7 +64,7 @@ public class ClientTask<T> extends Thread{
             try {
                 instream = new ObjectInputStream(socket.getInputStream());
 
-                requestMsg = (Message<?>)in.readObject();
+                requestMsg = (Message<?>)instream.readObject();
                 MessageType requestType = requestMsg.getType();
 
                 if (requestType == MessageType.SkeletonRequest) {
