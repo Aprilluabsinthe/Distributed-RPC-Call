@@ -1,14 +1,10 @@
 package rmi;
 
-import java.net.*;
-import java.net.http.WebSocket;
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.io.*;
-import java.io.Serializable;
-import java.lang.reflect.*;
-import java.util.Arrays;
-import java.util.List;
+import rmi.rmiThread.SkeletonThread;
+
+import java.net.InetSocketAddress;
+
+import static rmi.Helper.Helper.allThrowRMIExceptions;
 
 /** RMI skeleton
 
@@ -34,13 +30,11 @@ import java.util.List;
 */
 public class Skeleton<T>
 {
-    // TODO:
-    @Serial
     private static final long serialVersionUID = 1L;
     private Class<T> c;
     private T server;
     private InetSocketAddress address;
-    ServerSocket listener;
+    private SkeletonThread listener;
 
     /** Creates a <code>Skeleton</code> with no initial server address. The
         address will be determined by the system when <code>start</code> is
@@ -70,13 +64,8 @@ public class Skeleton<T>
             throw new Error("interface is not remote");
         }
         // if every method throws RMIExeption
-        Method[] selfmethods = c.getDeclaredMethods();
-        for(int i = 0 ; i < selfmethods.length; i++){
-            Class<?>[] exceptionsArr = selfmethods[i].getExceptionTypes();
-            List<Class<?>> exceptionsList = Arrays.asList(exceptionsArr);
-            if (!exceptionsList.contains(RMIException.class)){
-                throw new Error("Methods do not throw RMIException");
-            }
+        if (!allThrowRMIExceptions(c)){
+            throw new Error("Methods do not throw RMIException");
         }
         try{
             this.c = c;
@@ -107,7 +96,6 @@ public class Skeleton<T>
      */
     public Skeleton(Class<T> c, T server, InetSocketAddress address)
     {
-        // TODO: check every method throws RMIException
         if(c == null || server == null || address == null){
             throw new NullPointerException("interface or server or address is null");
         }
@@ -115,13 +103,8 @@ public class Skeleton<T>
             throw new Error("interface is not remote");
         }
         // if every method throws RMIExeption
-        Method[] selfmethods = c.getDeclaredMethods();
-        for(int i = 0 ; i < selfmethods.length; i++){
-            Class<?>[] exceptionsArr = selfmethods[i].getExceptionTypes();
-            List<Class<?>> exceptionsList = Arrays.asList(exceptionsArr);
-            if (!exceptionsList.contains(RMIException.class)){
-                throw new Error("Methods do not throw RMIException");
-            }
+        if (!allThrowRMIExceptions(c)){
+            throw new Error("Methods do not throw RMIException");
         }
         try{
             this.c = c;
@@ -131,14 +114,6 @@ public class Skeleton<T>
         catch (Exception e) {
             throw new UnsupportedOperationException("not implemented");
         }
-    }
-
-    /**
-     * get the address in a skeleton
-     * @return address
-     */
-    public InetSocketAddress getAddress() {
-        return address;
     }
 
     /** Called when the listening thread exits.
@@ -161,7 +136,6 @@ public class Skeleton<T>
      */
     protected void stopped(Throwable cause)
     {
-        // TODO:
     }
 
     /** Called when an exception occurs at the top level in the listening
@@ -181,7 +155,6 @@ public class Skeleton<T>
      */
     protected boolean listen_error(Exception exception)
     {
-        // TODO:
         return false;
     }
 
@@ -194,7 +167,6 @@ public class Skeleton<T>
      */
     protected void service_error(RMIException exception)
     {
-        // TODO:
     }
 
     /** Starts the skeleton server.
@@ -212,8 +184,13 @@ public class Skeleton<T>
      */
     public synchronized void start() throws RMIException
     {
-        // TODO:
-        throw new UnsupportedOperationException("not implemented");
+        listener = new SkeletonThread<T>(this,address);
+        if(listener.isAlive()){
+            throw new RMIException("already started");
+        }
+        if(listener != null){
+            listener.start();
+        }
     }
 
     /** Stops the skeleton server, if it is already running.
@@ -223,11 +200,44 @@ public class Skeleton<T>
         may continue running until their invocations of the <code>service</code>
         method return. The server stops at some later time; the method
         <code>stopped</code> is called at that point. The server may then be
-        restarted.
+        restarted.throw new UnsupportedOperationException("not implemented");
      */
     public synchronized void stop()
     {
-        // TODO:
-        throw new UnsupportedOperationException("not implemented");
+        if(listener != null) {
+            listener.stopThread();
+        }
+    }
+
+    /**
+     * get the address in a skeleton
+     * @return address
+     */
+    public InetSocketAddress getAddress() {
+        return address;
+    }
+
+    public String getHostName() {
+        return address.getHostName();
+    }
+
+    public int getPort() {
+        return address.getPort();
+    }
+
+    public Class<T> getClassT() {
+        return c;
+    }
+
+    public T getServer(){
+        return server;
+    }
+
+    public void setAddress(InetSocketAddress address) {
+        this.address = address;
+    }
+
+    public void setAddress(String hostname, int port) {
+        this.address = InetSocketAddress.createUnresolved(hostname, port);
     }
 }
