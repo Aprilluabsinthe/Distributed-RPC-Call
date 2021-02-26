@@ -10,16 +10,13 @@ import java.net.Socket;
 
 public class InvocationHandler<T> implements java.lang.reflect.InvocationHandler, Serializable {
     private static final long serialVersionUID = 3141566360570749149L;
-    private T server;
     private InetSocketAddress address;
 
-    public InvocationHandler(T server, String address, int port){
-        this.server = server;
+    public InvocationHandler(String address, int port){
         this.address = InetSocketAddress.createUnresolved(address,port);
     }
 
-    public InvocationHandler(T server, InetSocketAddress address){
-        this.server = server;
+    public InvocationHandler(InetSocketAddress address){
         this.address = address;
     }
 
