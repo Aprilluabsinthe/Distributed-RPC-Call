@@ -14,12 +14,12 @@ import java.io.Serializable;
 
 public class MethodRequestMessageData implements Serializable{
     private static final long serialVersionUID = 1L;
-    
+
     private String methodName;
     private Class<T>[] parameterTypes;
     private Object[] varArgs;
 
-    public MethodRequestMessageData(String methodName, Class<T> params, Object[] args) {
+    public MethodRequestMessageData(String methodName, Class<T>[] params, Object[] args) {
         this.parameterTypes = params;
         this.methodName = methodName;
         this.varArgs = args;
@@ -29,8 +29,8 @@ public class MethodRequestMessageData implements Serializable{
         this.methodName = s;
     }
 
-    public void setParameterTypes(Class<T> s) {
-        this.parameterTypes = params;
+    public void setParameterTypes(Class<T>[] s) {
+        this.parameterTypes = s;
     }
 
     public void setVarArgs(Object[] s) {
@@ -41,7 +41,7 @@ public class MethodRequestMessageData implements Serializable{
         return methodName;
     }
 
-    public Class<T> getParameterTypes() {
+    public Class<T>[] getParameterTypes() {
         return parameterTypes;
     }
 
