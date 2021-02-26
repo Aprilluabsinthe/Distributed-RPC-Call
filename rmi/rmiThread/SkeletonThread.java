@@ -1,4 +1,4 @@
-package rmi;
+package rmi.rmithread;
 
 import java.io.*;
 import java.net.InetSocketAddress;
@@ -11,10 +11,15 @@ import java.util.Map;
 import rmi.Skeleton;
 
 /**
-    ref: https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html
+ * 
+ * This class abstracts a server thread.
+ * 
+ * ref: https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html
  https://web.mit.edu/6.005/www/fa15/classes/23-locks/
  https://www.geeksforgeeks.org/introducing-threads-socket-programming-java/
-*/
+ * 
+ * @author Di Lu, Yuan Gu
+ */
 public class SkeletonThread<T> extends Thread implements Serializable {
     private static final long serialVersionUID = 4890265821034549516L;
     private ServerSocket ss;
@@ -94,11 +99,10 @@ public class SkeletonThread<T> extends Thread implements Serializable {
             ClientTask<T> task = (ClientTask<T>)entry.getValue();
             try {
                 if (task.isAlive()) {
-                    task.stop();
+                    task.stopThread();
                 }
                 task.join();
             } catch (InterruptedException ie) {
-                //TODO: handle exception
                 ie.printStackTrace();
             }
         }

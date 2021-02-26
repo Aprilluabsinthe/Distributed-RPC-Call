@@ -4,6 +4,9 @@ import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import rmi.rmiThread.SkeletonThread;
+import rmi.helper.Helper;
+
 /** RMI skeleton
 
     <p>
@@ -64,7 +67,7 @@ public class Skeleton<T>
             throw new Error("class is not an interface");
         }
         // if every method throws RMIExeption
-        if (!isRemoteInterface(c)) {
+        if (!Helper.allThrowRMIExceptions(c)) {
             throw new Error("the interface is not remote a interface");
         }
         this.c = c;
@@ -98,7 +101,7 @@ public class Skeleton<T>
             throw new Error("interface is not remote");
         }
         // if every method throws RMIExeption
-        if (!isRemoteInterface(c)) {
+        if (!Helper.allThrowRMIExceptions(c)) {
             throw new Error("the interface is not remote a interface");
         }
         
@@ -194,7 +197,7 @@ public class Skeleton<T>
     public synchronized void stop()
     {
         skeletonThread.stopThread();
-        
+
         //continue running
         while (skeletonThread.isAlive()) { }
     }
@@ -221,17 +224,5 @@ public class Skeleton<T>
 
     public void setAddr(InetSocketAddress address) {
         this.addr = address;
-    }
-
-    private boolean isRemoteInterface(Class<T> c) {
-        Method[] selfmethods = c.getDeclaredMethods();
-        for(int i = 0 ; i < selfmethods.length; i++){
-            Class<?>[] exceptionsArr = selfmethods[i].getExceptionTypes();
-            List<Class<?>> exceptionsList = Arrays.asList(exceptionsArr);
-            if (!exceptionsList.contains(RMIException.class)){
-                return false;
-            }
-        }
-        return true;
     }
 }
