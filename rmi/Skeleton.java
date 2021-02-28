@@ -200,12 +200,12 @@ public class Skeleton<T>
         while (skeletonThread.isAlive()) { }
     }
 
-    public Class<T> getClass() {
+    public Class<T> getClassT() {
         return c;
     }
 
-    public void setClass(Class<T> class) {
-        this.c = class;
+    public void setClass(Class<T> claz) {
+        this.c = claz;
     }
 
     public T getServer() {
@@ -222,5 +222,13 @@ public class Skeleton<T>
 
     public void setAddr(InetSocketAddress address) {
         this.addr = address;
+    }
+
+    public int getPort() {
+        return this.addr.getPort();
+    }
+
+    public String getHostName() {
+        return this.addr.getHostName();
     }
 }
