@@ -8,7 +8,6 @@ import rmi.data.Message;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
-import rmi.data.*;
 
 public class Helper {
 
@@ -24,7 +23,7 @@ public class Helper {
         BLOCKED,
         WAITING,
         TIMED_WAITING,
-        TERMINATED;
+        TERMINATED
     }
 
     public static <T> boolean allThrowRMIExceptions(Class<T> c){
