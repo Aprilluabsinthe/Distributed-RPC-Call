@@ -39,14 +39,14 @@ public class Helper {
         return true;
     }
 
-    public static Boolean checkDataType(Message message, MessageType validtype){
+    public static Boolean checkDataType(Message<?> message, MessageType validtype){
         if(message == null){
             return false;
         }
         return message.getType() == validtype;
     }
 
-    public static <T> Boolean isServerInterface(Class<T> c, Skeleton<T> skeleton){
+    public static Boolean isServerInterface(Class<?> c, Skeleton<?> skeleton){
         if(!c.isInterface()){
             return false;
         }
