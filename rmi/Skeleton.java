@@ -1,5 +1,5 @@
 package rmi;
-
+import java.io.Serializable;
 import java.net.*;
 
 import rmi.rmithread.SkeletonThread;
@@ -27,11 +27,8 @@ import rmi.helper.Helper;
     a class from <code>Skeleton</code> and overriding <code>listen_error</code>
     or <code>service_error</code>.
 */
-public class Skeleton<T>
-{
-
-
-    private static final long serialVersionUID = 1L;
+public class Skeleton<T> implements Serializable {
+    private static final long serialVersionUID = -4441650570680991973L;
     private Class<T> c;
     private T server;
     private InetSocketAddress addr;
@@ -193,11 +190,10 @@ public class Skeleton<T>
         restarted.
      */
     public synchronized void stop()
-    {
-        skeletonThread.stopThread();
-
-        //continue running
+    {   //continue running
         while (skeletonThread.isAlive()) { }
+        skeletonThread.stopThread();
+        stopped(null);
     }
 
     public Class<T> getClassT() {
