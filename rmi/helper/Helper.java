@@ -2,12 +2,16 @@
 package rmi.helper;
 
 import rmi.RMIException;
+import rmi.Skeleton;
+import rmi.data.Message;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import rmi.data.*;
 
 public class Helper {
+
     public enum MessageType {
         SkeletonRequest, SkeletonResponse,
         MethodRequest, MethodResponse,
@@ -34,4 +38,23 @@ public class Helper {
         }
         return true;
     }
+
+    public static Boolean checkDataType(Message message, MessageType validtype){
+        if(message == null){
+            return false;
+        }
+        if(message.getType() == validtype){
+            return true;
+        }
+        return false;
+    }
+
+    public static <T> Boolean isServerInterface(Class<T> c, Skeleton<T> skeleton){
+        if(!c.isInterface()){
+            return false;
+        }
+        Class<?> interfaces[] = skeleton.getServer().getClass().getInterfaces();
+        return Arrays.asList(interfaces).contains(c);
+    }
+
 }
