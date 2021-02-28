@@ -57,11 +57,11 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton)
         throws UnknownHostException
     {
-        if(skeleton.getAddr() == null){
-            throw new IllegalStateException("keleton has not been assigned an address by the user and has not yet been started.");
-        }
         if(c == null || skeleton == null){
             throw new NullPointerException("interface or server is null");
+        }
+        if(skeleton.getAddr() == null){
+            throw new IllegalStateException("keleton has not been assigned an address by the user and has not yet been started.");
         }
         if( !Helper.isServerInterface(c,skeleton)){
             throw new Error("interface Error: not an interface or not belongs to server");
@@ -71,10 +71,7 @@ public abstract class Stub
             throw new Error("Methods do not throw RMIException");
         }
         try{
-            proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddr());
-            ClassLoader loader = skeleton.getClassT().getClassLoader();
-            Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
-            return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
+            return callStubProxy(skeleton);
         }
         catch (Exception e){
             throw new UnsupportedOperationException("not implemented");
@@ -130,10 +127,7 @@ public abstract class Stub
         try{
             InetSocketAddress newaddr = InetSocketAddress.createUnresolved(hostname,skeleton.getAddr().getPort());
             skeleton.setAddr(newaddr);
-            proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddr());
-            ClassLoader loader = skeleton.getClassT().getClassLoader();
-            Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
-            return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
+            return callStubProxy(skeleton);
         }
         catch (Exception e) {
             throw new UnsupportedOperationException("not implemented");
@@ -174,7 +168,7 @@ public abstract class Stub
             ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
 
             // new Message, requesting for a skeleton
-            Message<Skeleton<T>> sklReqMsg = new Message<Skeleton<T>>(null, Helper.MessageType.SkeletonRequest);
+            Message<Skeleton<T>> sklReqMsg = new Message<>(null, Helper.MessageType.SkeletonRequest);
             outstream.writeObject(sklReqMsg);
             outstream.flush();
 
@@ -202,22 +196,22 @@ public abstract class Stub
             if( !Helper.isServerInterface(c,skeleton)){
                 throw new Error("interface Error: not an interface or not belongs to server");
             }
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
 
         try{
-            proxyInvocationHandler stubHandler = new proxyInvocationHandler(address);
-            ClassLoader loader = skeleton.getClassT().getClassLoader();
-            Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
-            return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
+            return callStubProxy(skeleton);
         }
         catch (Exception e) {
             throw new UnsupportedOperationException("not implemented");
         }
+    }
+
+    public static <T> T callStubProxy(Skeleton skeleton){
+        proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddr());
+        ClassLoader loader = skeleton.getClassT().getClassLoader();
+        Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
+        return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
     }
 }
