@@ -13,7 +13,7 @@ import rmi.Skeleton;
 /**
  * 
  * This class abstracts a server thread.
- * 
+ *
  * ref: https://docs.oracle.com/javase/tutorial/essential/concurrency/locksync.html
  https://web.mit.edu/6.005/www/fa15/classes/23-locks/
  https://www.geeksforgeeks.org/introducing-threads-socket-programming-java/
@@ -27,7 +27,7 @@ public class SkeletonThread<T> extends Thread implements Serializable {
     private InetSocketAddress address;
     private Skeleton<T> skeleton;
     private final Object lock = new Object();
-    Map<SocketAddress, ClientTask<T>> taskRegister = new HashMap<>();
+    Map<SocketAddress, rmi.rmithread.ClientTask<T>> taskRegister = new HashMap<>();
     private ObjectOutputStream objout = null;
     private ObjectInputStream objin = null;
 
@@ -50,7 +50,7 @@ public class SkeletonThread<T> extends Thread implements Serializable {
      * */
     public SkeletonThread(Skeleton<T> skeleton){
         this.skeleton = skeleton;
-        this.address = skeleton.getAddress();
+        this.address = skeleton.getAddr();
         this.port = this.address.getPort();
     }
 

@@ -1,5 +1,6 @@
 package rmi.rmithread;
 
+import rmi.RMIException;
 import rmi.Skeleton;
 import rmi.helper.Helper.MessageType;
 import rmi.data.Message;
@@ -8,10 +9,12 @@ import rmi.data.MethodRequestMessageData;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
-
+import rmi.helper.Helper;
 
 /**
  * 
@@ -71,7 +74,7 @@ public class ClientTask<T> extends Thread{
 
                     responseMsg = new Message<Object>(new Skeleton<T>(skeleton.getClass(), skeleton.getServer()), MessageType.SkeletonResponse);
 
-                } else if (requestType == Message.MethodRequest) {
+                } else if (requestType == MessageType.MethodRequest) {
                     MethodRequestMessageData mrmd = (MethodRequestMessageData)requestMsg.getData();
 
                     /*
@@ -86,7 +89,7 @@ public class ClientTask<T> extends Thread{
                     Object invokedResult = null;
                     
                     try {
-                        Class<T> serverClass = Class.forName(skeleton.getClass().getName());
+                        Class<T> serverClass = (Class<T>) Class.forName(skeleton.getClass().getName());
                         Method calledMethod = serverClass.getDeclaredMethod(mrmd.getMethodName(), mrmd.getParameterTypes());
 
                         // invoke the same method on the remote server
@@ -106,7 +109,7 @@ public class ClientTask<T> extends Thread{
                         rrr.printStackTrace();
                     }
 
-                    responseMsg = new Message<MethodRequestMessageData>(invokedResult, MessageType.MethodResponse);
+                    responseMsg = new Message<MethodRequestMessageData>((MethodRequestMessageData) invokedResult, MessageType.MethodResponse);
 
                 } else {
                     responseMsg = new Message<Object>(new RMIException("invalid request"), MessageType.UnexceptedRequest);
@@ -116,7 +119,7 @@ public class ClientTask<T> extends Thread{
                 outstream.writeObject(responseMsg);
                 outstream.flush();
 
-            } catch (IOxception ioe) {
+            } catch (IOException ioe) {
                 ioe.printStackTrace();
             } catch (ClassNotFoundException cnfe) {
                 cnfe.printStackTrace();

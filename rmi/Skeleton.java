@@ -1,10 +1,8 @@
 package rmi;
 
 import java.net.*;
-import java.io.*;
-import java.util.*;
 
-import rmi.rmiThread.SkeletonThread;
+import rmi.rmithread.SkeletonThread;
 import rmi.helper.Helper;
 
 /** RMI skeleton
