@@ -72,10 +72,10 @@ public class ClientTask<T> extends Thread{
 
                 if (requestType == MessageType.SkeletonRequest) {
 
-                    responseMsg = new Message<Object>(new Skeleton<T>(skeleton.getClass(), skeleton.getServer()), MessageType.SkeletonResponse);
+                    responseMsg = new Message<Object>(new Skeleton<T>(skeleton.getClassT(), skeleton.getServer()), MessageType.SkeletonResponse);
 
                 } else if (requestType == MessageType.MethodRequest) {
-                    MethodRequestMessageData mrmd = (MethodRequestMessageData)requestMsg.getData();
+                    MethodRequestMessageData mrmd = (MethodRequestMessageData) requestMsg.getData();
 
                     /*
                     NoSuchMethodException
