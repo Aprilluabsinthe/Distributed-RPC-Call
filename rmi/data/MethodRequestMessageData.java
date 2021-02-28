@@ -1,6 +1,8 @@
 package rmi.data;
 
 import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Objects;
 
 /**
  * MethodRequestMessageData abstracts a method request,
@@ -47,5 +49,30 @@ public class MethodRequestMessageData implements Serializable{
 
     public Object[] getVarArgs() {
         return varArgs;
+    }
+
+    @Override
+    public String toString() {
+        return "MethodRequestMessageData{" +
+                "methodName='" + methodName + '\'' +
+                ", parameterTypes=" + Arrays.toString(parameterTypes) +
+                ", varArgs=" + Arrays.toString(varArgs) +
+                '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof MethodRequestMessageData)) return false;
+        MethodRequestMessageData that = (MethodRequestMessageData) o;
+        return methodName.equals(that.methodName) && Arrays.equals(parameterTypes, that.parameterTypes) && Arrays.equals(varArgs, that.varArgs);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = Objects.hash(methodName);
+        result = 31 * result + Arrays.hashCode(parameterTypes);
+        result = 31 * result + Arrays.hashCode(varArgs);
+        return result;
     }
 }
