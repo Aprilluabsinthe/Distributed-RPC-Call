@@ -13,11 +13,11 @@ import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 
-public class proxyInvocationHandler<T> implements InvocationHandler,Serializable {
+public class proxyInvocationHandler implements InvocationHandler,Serializable {
     private static final long serialVersionUID = 3141566360570749149L;
-    private InetSocketAddress socketAddress;
-    private String hostname;
-    private int port;
+    private final InetSocketAddress socketAddress;
+    private final String hostname;
+    private final int port;
 
     public proxyInvocationHandler(InetSocketAddress socketAddress){
         this.socketAddress = socketAddress;
@@ -37,7 +37,7 @@ public class proxyInvocationHandler<T> implements InvocationHandler,Serializable
         try{
             Socket socket = new Socket(this.hostname,this.port);
             MethodRequestMessageData mrmd = new MethodRequestMessageData(method.getName(), method.getParameterTypes(), args);
-            Message<MethodRequestMessageData> message = new Message<MethodRequestMessageData>(mrmd, MessageType.MethodRequest);
+            Message<MethodRequestMessageData> message = new Message<>(mrmd, MessageType.MethodRequest);
             ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
             outstream.writeObject(message);
             outstream.flush();
@@ -53,7 +53,7 @@ public class proxyInvocationHandler<T> implements InvocationHandler,Serializable
                 }
                 else{ // received something, validate and extract dtaa
                     received = true;
-                    if( Helper.checkDataType(responseMsg,MessageType.MethodRequest)){
+                    if( Helper.checkDataType(responseMsg,MessageType.MethodResponse)){
                         invokeResult= responseMsg.getData();
                     }
                     else{
@@ -67,11 +67,7 @@ public class proxyInvocationHandler<T> implements InvocationHandler,Serializable
             instream.close();
             outstream.close();
             socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (RMIException e) {
+        } catch (IOException | ClassNotFoundException | RMIException e) {
             e.printStackTrace();
         }
         return invokeResult;
