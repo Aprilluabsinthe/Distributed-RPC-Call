@@ -1,6 +1,15 @@
 package rmi;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Proxy;
 import java.net.*;
+
+import rmi.data.Message;
+import rmi.helper.Helper;
+import rmi.proxyInvocationHandler;
+
+import static rmi.helper.Helper.allThrowRMIExceptions;
 
 /** RMI stub factory.
 
@@ -48,7 +57,28 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton)
         throws UnknownHostException
     {
-        throw new UnsupportedOperationException("not implemented");
+        if(skeleton.getAddr() == null){
+            throw new IllegalStateException("keleton has not been assigned an address by the user and has not yet been started.");
+        }
+        if(c == null || skeleton == null){
+            throw new NullPointerException("interface or server is null");
+        }
+        if( !Helper.isServerInterface(c,skeleton)){
+            throw new Error("interface Error: not an interface or not belongs to server");
+        }
+        // if every method throws RMIExeption
+        if (!allThrowRMIExceptions(c)){
+            throw new Error("Methods do not throw RMIException");
+        }
+        try{
+            proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddr());
+            ClassLoader loader = skeleton.getClassT().getClassLoader();
+            Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
+            return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
+        }
+        catch (Exception e){
+            throw new UnsupportedOperationException("not implemented");
+        }
     }
 
     /** Creates a stub, given a skeleton with an assigned address and a hostname
@@ -84,7 +114,30 @@ public abstract class Stub
     public static <T> T create(Class<T> c, Skeleton<T> skeleton,
                                String hostname)
     {
-        throw new UnsupportedOperationException("not implemented");
+        if((skeleton.getAddr() == null) || (skeleton.getPort() == 0)){
+            throw new IllegalStateException("skeleton has not been assigned an address by the user and has not yet been started.");
+        }
+        if(c == null || skeleton == null){
+            throw new NullPointerException("interface or server is null");
+        }
+        if( !Helper.isServerInterface(c,skeleton)){
+            throw new Error("interface Error: not an interface or not belongs to server");
+        }
+        // if every method throws RMIExeption
+        if (!allThrowRMIExceptions(c)){
+            throw new Error("Methods do not throw RMIException");
+        }
+        try{
+            InetSocketAddress newaddr = InetSocketAddress.createUnresolved(hostname,skeleton.getAddr().getPort());
+            skeleton.setAddr(newaddr);
+            proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddr());
+            ClassLoader loader = skeleton.getClassT().getClassLoader();
+            Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
+            return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
+        }
+        catch (Exception e) {
+            throw new UnsupportedOperationException("not implemented");
+        }
     }
 
     /** Creates a stub, given the address of a remote server.
@@ -106,6 +159,65 @@ public abstract class Stub
      */
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
-        throw new UnsupportedOperationException("not implemented");
+        if(c == null || address == null){
+            throw new NullPointerException("interface or server is null");
+        }
+        // if every method throws RMIExeption
+        if (!allThrowRMIExceptions(c)){
+            throw new Error("Methods do not throw RMIException");
+        }
+
+        // no skeleton for use, apply for a skeleton
+        Skeleton<T> skeleton = null;
+        try{
+            Socket socket = new Socket(address.getHostName(), address.getPort());
+            ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
+
+            // new Message, requesting for a skeleton
+            Message<Skeleton<T>> sklReqMsg = new Message<Skeleton<T>>(null, Helper.MessageType.SkeletonRequest);
+            outstream.writeObject(sklReqMsg);
+            outstream.flush();
+
+            // new InputStream Object
+            ObjectInputStream instream = new ObjectInputStream(socket.getInputStream());
+            Message<?> sklResMsg = (Message<?>) instream.readObject();
+            boolean received = false;
+            while(!received){
+                if(sklResMsg == null){ // do nothing
+                }
+                else{// received something
+                    received = true;
+                    if(Helper.checkDataType(sklResMsg, Helper.MessageType.SkeletonResponse)) {
+                        skeleton = (Skeleton<T>) sklResMsg.getData();
+                    }
+                    else{
+                        throw new Error("Expecting SkeletonResponse, received unexpected Message");
+                    }
+                }
+            }
+
+            if(skeleton == null){
+                throw new Error("Expecting SkeletonResponse, received unexpected Message");
+            }
+            if( !Helper.isServerInterface(c,skeleton)){
+                throw new Error("interface Error: not an interface or not belongs to server");
+            }
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try{
+            proxyInvocationHandler stubHandler = new proxyInvocationHandler(address);
+            ClassLoader loader = skeleton.getClassT().getClassLoader();
+            Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
+            return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
+        }
+        catch (Exception e) {
+            throw new UnsupportedOperationException("not implemented");
+        }
     }
 }
