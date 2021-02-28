@@ -12,7 +12,7 @@ import java.io.Serializable;
  * @author Yuan Gu
  */
 
-public class MethodRequestMessageData implements Serializable{
+public class MethodRequestMessageData<T> implements Serializable{
     private static final long serialVersionUID = 1L;
 
     private String methodName;
