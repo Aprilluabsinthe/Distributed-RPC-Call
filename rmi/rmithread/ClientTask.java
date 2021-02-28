@@ -11,7 +11,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketAddress;
 import rmi.helper.Helper;
@@ -57,11 +56,11 @@ public class ClientTask<T> extends Thread{
 
     @Override
     public void run() {
-        ObjectInputStream instream = null;
-        ObjectOutputStream outstream = null;
+        ObjectInputStream instream;
+        ObjectOutputStream outstream;
 
-        Message requestMsg = null;
-        Message responseMsg = null;
+        Message<?> requestMsg;
+        Message<?> responseMsg;
         
         while (isRunning) {
             try {
