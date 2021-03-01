@@ -10,29 +10,67 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Objects;
 
-public class proxyInvocationHandler implements InvocationHandler,Serializable {
+public class proxyInvocationHandler<T> implements InvocationHandler,Serializable {
     private static final long serialVersionUID = 3141566360570749149L;
     private final InetSocketAddress socketAddress;
     private final String hostname;
     private final int port;
+    private Class<T> clazz;
+    private Skeleton<T> skeleton;
 
-    public proxyInvocationHandler(InetSocketAddress socketAddress){
+    public proxyInvocationHandler(Class<T> clazz, Skeleton<T> skeleton, InetSocketAddress socketAddress){
+        this.clazz = clazz;
+        this.skeleton = skeleton;
         this.socketAddress = socketAddress;
         this.hostname = socketAddress.getHostName();
         this.port = socketAddress.getPort();
     }
 
-    public proxyInvocationHandler(String hostname, int port){
+    public proxyInvocationHandler(Class<T> clazz, Skeleton<T> skeleton, String hostname, int port){
+        this.clazz = clazz;
+        this.skeleton = skeleton;
         this.hostname = hostname;
         this.port = port;
         this.socketAddress = InetSocketAddress.createUnresolved(hostname,port);
     }
 
+    public proxyInvocationHandler(Class<T> clazz, Skeleton<T> skeleton){
+        this.clazz = clazz;
+        this.skeleton = skeleton;
+        this.hostname = skeleton.getHostName();
+        this.port = skeleton.getPort();
+        this.socketAddress = InetSocketAddress.createUnresolved(hostname,port);
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+        /** override equals, toString and hashCode
+        * */
+        if(method.equals( Object.class.getMethod("equals"))){
+            if (!(args[0] instanceof Proxy)) return false;
+            else{
+                proxyInvocationHandler other = (proxyInvocationHandler) Proxy.getInvocationHandler(args[0]);
+                return (clazz.equals( other.getClazz() ) && skeleton.equals( other.getSkeleton()));
+            }
+        }
+
+        if(method.equals( Object.class.getMethod("hashCode") )){
+            return skeleton.hashCode() * 31 + clazz.hashCode()  * 31 ;
+        }
+
+        if(method.equals( Object.class.getMethod("toString") )){
+            return "Class Interface=" + clazz.getCanonicalName()+
+                    "remote address hostname=" + socketAddress.getHostName() +
+                    "remote address port=" + socketAddress.getPort();
+        }
+
+        /** invoke handler
+         * */
         Object invokeResult = null;
         try{
             Socket socket = new Socket(this.hostname,this.port);
@@ -72,5 +110,15 @@ public class proxyInvocationHandler implements InvocationHandler,Serializable {
         }
         return invokeResult;
     }
+
+    public Skeleton<T> getSkeleton() {
+        return skeleton;
+    }
+
+
+    public Class<T> getClazz() {
+        return clazz;
+    }
+
 }
 

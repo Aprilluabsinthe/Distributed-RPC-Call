@@ -71,7 +71,7 @@ public abstract class Stub
             throw new Error("Methods do not throw RMIException");
         }
         try{
-            return callStubProxy(skeleton);
+            return callStubProxy(c,skeleton);
         }
         catch (Exception e){
             throw new UnsupportedOperationException("not implemented");
@@ -127,7 +127,7 @@ public abstract class Stub
         try{
             InetSocketAddress newaddr = InetSocketAddress.createUnresolved(hostname,skeleton.getAddr().getPort());
             skeleton.setAddr(newaddr);
-            return callStubProxy(skeleton);
+            return callStubProxy(c,skeleton);
         }
         catch (Exception e) {
             throw new UnsupportedOperationException("not implemented");
@@ -201,15 +201,15 @@ public abstract class Stub
         }
 
         try{
-            return callStubProxy(skeleton);
+            return callStubProxy(c,skeleton);
         }
         catch (Exception e) {
             throw new UnsupportedOperationException("not implemented");
         }
     }
 
-    public static <T> T callStubProxy(Skeleton skeleton){
-        proxyInvocationHandler stubHandler = new proxyInvocationHandler(skeleton.getAddr());
+    public static <T> T callStubProxy(Class<T> c, Skeleton skeleton){
+        proxyInvocationHandler stubHandler = new proxyInvocationHandler(c, skeleton);
         ClassLoader loader = skeleton.getClassT().getClassLoader();
         Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
         return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
