@@ -27,30 +27,58 @@ public class MethodRequestMessageData implements Serializable{
         this.varArgs = args;
     }
 
+    /**
+     * Setter for Method Name
+     * @param s
+     */
     public void setMethodName(String s) {
         this.methodName = s;
     }
 
+    /**
+     * Setter for Parameter Types
+     * @param s
+     */
     public void setParameterTypes(Class<?>[] s) {
         this.parameterTypes = s;
     }
 
+    /**
+     * Setter for varArgs
+     * @param s
+     */
     public void setVarArgs(Object[] s) {
         this.varArgs = s;
     }
 
+    /**
+     * Getter for Method Name
+     * @return
+     */
     public String getMethodName() {
         return methodName;
     }
 
+    /**
+     * Getter for Parameter Types
+     * @return
+     */
     public Class<?>[] getParameterTypes() {
         return parameterTypes;
     }
 
+    /**
+     * Getter for varArgs
+     * @return
+     */
     public Object[] getVarArgs() {
         return varArgs;
     }
 
+    /**
+     * Override toString
+     * @return
+     */
     @Override
     public String toString() {
         return "MethodRequestMessageData{" +
@@ -60,6 +88,10 @@ public class MethodRequestMessageData implements Serializable{
                 '}';
     }
 
+    /**
+     * Override equals
+     */
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -68,6 +100,10 @@ public class MethodRequestMessageData implements Serializable{
         return methodName.equals(that.methodName) && Arrays.equals(parameterTypes, that.parameterTypes) && Arrays.equals(varArgs, that.varArgs);
     }
 
+    /**
+     * Override hashCode()
+     * @return
+     */
     @Override
     public int hashCode() {
         int result = Objects.hash(methodName);

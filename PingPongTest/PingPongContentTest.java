@@ -2,8 +2,21 @@ package PingPongTest;
 
 import rmi.RMIException;
 
+/**
+ * the Helper class for PingPong context test
+ * @author Di Lu
+ */
 public class PingPongContentTest {
-    public void content(int number){}
+    /**
+     * The testing method for client side proxy stub
+     * <p>
+     *     print the response to console for validating
+     * </p>
+     *
+     * @param pingStub
+     * @param number the number of ids to be tested and printed
+     * @throws RMIException
+     */
     public static void testContent(PingServer pingStub, int number) throws RMIException {
         for (int i = 0 ; i <= number; i++){
             String response = pingStub.ping(i);

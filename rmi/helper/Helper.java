@@ -9,8 +9,14 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The Helper Class for RMI
+ * Containing enum MessageType
+ * Checking Methods for interfaces <code>c</code> about Throwing RMIExceptions
+ * Checking Methods for DataType
+ * Checking Methods for isServerInterface
+ */
 public class Helper {
-
     public enum MessageType {
         SkeletonRequest, SkeletonResponse,
         MethodRequest, MethodResponse,
@@ -26,6 +32,16 @@ public class Helper {
         TERMINATED
     }
 
+    /**
+     * Checking whether all intercfaces throw an RMIExceptions
+     * <p>
+     *     Checking Methods for interfaces <code>c</code> about Throwing RMIExceptions
+     *     if any of the interfaces in <code>c</code> do not throw an RMIExceptions, return false
+     *     else return True
+     *
+     * @param c
+     * @return
+     */
     public static <T> boolean allThrowRMIExceptions(Class<T> c){
         Method[] selfmethods = c.getDeclaredMethods();
         for(int i = 0 ; i < selfmethods.length; i++){
@@ -38,6 +54,12 @@ public class Helper {
         return true;
     }
 
+    /**
+     * Checking whether the MessageType is the type required
+     * @param message
+     * @param validtype
+     * @return
+     */
     public static Boolean checkDataType(Message<?> message, MessageType validtype){
         if(message == null){
             return false;
@@ -45,6 +67,12 @@ public class Helper {
         return message.getType() == validtype;
     }
 
+    /**
+     * Checking whether c is a interface in skeleton
+     * @param c
+     * @param skeleton
+     * @return
+     */
     public static Boolean isServerInterface(Class<?> c, Skeleton<?> skeleton){
         if(!c.isInterface()){
             return false;
