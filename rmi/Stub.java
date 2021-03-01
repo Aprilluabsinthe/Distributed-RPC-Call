@@ -114,8 +114,11 @@ public abstract class Stub
         if((skeleton.getAddr() == null) || (skeleton.getPort() == 0)){
             throw new IllegalStateException("skeleton has not been assigned an address by the user and has not yet been started.");
         }
-        if(c == null || skeleton == null){
+        if( c == null || skeleton == null){
             throw new NullPointerException("interface or server is null");
+        }
+        if( hostname == null || hostname == ""){
+            throw new NullPointerException("hostname is null or enpty");
         }
         if( !Helper.isServerInterface(c,skeleton)){
             throw new Error("interface Error: not an interface or not belongs to server");
@@ -166,7 +169,6 @@ public abstract class Stub
         try{
             Socket socket = new Socket(address.getHostName(), address.getPort());
             ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
-
             // new Message, requesting for a skeleton
             Message<Skeleton<T>> sklReqMsg = new Message<>(null, Helper.MessageType.SkeletonRequest);
             outstream.writeObject(sklReqMsg);
@@ -210,8 +212,8 @@ public abstract class Stub
 
     public static <T> T callStubProxy(Class<T> c, Skeleton skeleton){
         proxyInvocationHandler stubHandler = new proxyInvocationHandler(c, skeleton);
-        ClassLoader loader = skeleton.getClassT().getClassLoader();
-        Class<?>[] interfaces = skeleton.getServer().getClass().getInterfaces();
+        ClassLoader loader = c.getClassLoader();
+        Class<?>[] interfaces = new Class[]{c};
         return (T) Proxy.newProxyInstance(loader,interfaces,stubHandler);
     }
 }
