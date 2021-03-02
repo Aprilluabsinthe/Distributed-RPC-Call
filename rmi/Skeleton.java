@@ -174,10 +174,19 @@ public class Skeleton<T> implements Serializable {
     public synchronized void start() throws RMIException
     {
         skeletonThread = new SkeletonThread<T>(this, addr);
+
         if (skeletonThread.isAlive()) {
             throw new RMIException("server has already started");
         }
         skeletonThread.start();
+
+        /*
+
+        try {
+            Thread.sleep(1000);
+        } catch (Exception e) {
+            //TODO: handle exception
+        }*/
     }
 
     /** Stops the skeleton server, if it is already running.
@@ -190,9 +199,10 @@ public class Skeleton<T> implements Serializable {
         restarted.
      */
     public synchronized void stop()
-    {   //continue running
-        while (skeletonThread.isAlive()) { }
-        skeletonThread.stopThread();
+    {   
+        if (skeletonThread.isAlive()) { 
+            skeletonThread.stopThread();
+        }
         stopped(null);
     }
 
