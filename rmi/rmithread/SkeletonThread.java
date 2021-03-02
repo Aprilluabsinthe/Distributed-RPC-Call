@@ -7,6 +7,7 @@ import java.net.Socket;
 import java.net.SocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.net.*;
 
 import rmi.Skeleton;
 
@@ -31,6 +32,7 @@ public class SkeletonThread<T> extends Thread implements Serializable {
     private ObjectOutputStream objout = null;
     private ObjectInputStream objin = null;
 
+    private volatile boolean stopped;
     /**
      * two constructive functions
      * the first one with initial server address, for <code>public Skeleton(Class<T> c, T server)<code>
@@ -39,7 +41,9 @@ public class SkeletonThread<T> extends Thread implements Serializable {
     public SkeletonThread(Skeleton<T> skeleton, InetSocketAddress address){
         this.skeleton = skeleton;
         this.address = address;
-        this.port = this.address.getPort();
+        if (address != null) {
+            this.port = address.getPort();
+        }
     }
 
     /**
@@ -63,19 +67,24 @@ public class SkeletonThread<T> extends Thread implements Serializable {
     @Override
     public void run(){
         System.out.println("Run Server side Thread");
+        stopped = false;
         Socket clientSocket = null;
         try {
             ss = new ServerSocket(port);
             System.out.println("Skeleton Thread Waiting for Client");
-            while (true) {
+            while (!stopped) {
                 synchronized(this.lock){
-                    try{
+                    try {
+
                         clientSocket = ss.accept();
+                        System.out.println("accepted...");
+                        //System.out.println(clientSocket.getRemoteSocketAddress());
                         ClientTask<T> task = new ClientTask<T>(skeleton,clientSocket);
                         taskRegister.put(clientSocket.getRemoteSocketAddress(), task);
                         task.start();
-                    }catch(IOException e){
-                        System.err.println("Failed to accept the client's connection...");
+
+                    } catch(IOException e) {
+                        System.out.println("Failed to accept the client's connection...");
                         e.printStackTrace();
                         break;
                     }
@@ -85,9 +94,12 @@ public class SkeletonThread<T> extends Thread implements Serializable {
             System.err.println("Unable to create server socket...");
             e.printStackTrace();
         }
+        //System.out.println("return from run");
     }
 
     public void stopThread(){
+        stopped = true;
+        System.out.println("stop the listener thread");
         try{
             ss.close();
         } catch (IOException e) {
@@ -95,7 +107,9 @@ public class SkeletonThread<T> extends Thread implements Serializable {
             e.printStackTrace();
         }
 
+        // deal with all current connections
         for (Map.Entry entry: taskRegister.entrySet()) {
+            SocketAddress key = (SocketAddress)entry.getKey();
             ClientTask<T> task = (ClientTask<T>)entry.getValue();
             try {
                 if (task.isAlive()) {
@@ -106,7 +120,11 @@ public class SkeletonThread<T> extends Thread implements Serializable {
                 ie.printStackTrace();
             }
         }
-        taskRegister.clear();
+
         System.out.println("Stop successfully");
+    }
+
+    public boolean isRunning() {
+        return !stopped;
     }
 }
