@@ -12,6 +12,27 @@ import java.util.List;
 
 public class Helper {
 
+
+
+
+    public enum MessageType {
+        SkeletonRequest, SkeletonResponse,
+        MethodRequest, MethodResponse,
+        UnexceptedRequest;
+    }
+
+
+    public enum DataStatus {
+        VALID,
+        INVALID;
+    }
+
+
+    public enum ThreadState {
+        RUNNING,
+        STOPPED;
+    }
+
     /**
      * Checking whether the MessageType is the type required
      * @param message
@@ -39,27 +60,6 @@ public class Helper {
             return false;
         }
         return true;
-    }
-
-
-    public enum MessageType {
-        SkeletonRequest, SkeletonResponse,
-        MethodRequest, MethodResponse,
-        UnexceptedRequest,
-    }
-
-    public enum DataStatus {
-        VALID,
-        INVALID
-    }
-
-    public enum ThreadState {
-        NEW,
-        RUNNABLE,
-        BLOCKED,
-        WAITING,
-        TIMED_WAITING,
-        TERMINATED
     }
 
     /**

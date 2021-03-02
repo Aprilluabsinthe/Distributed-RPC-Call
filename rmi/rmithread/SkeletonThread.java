@@ -16,8 +16,7 @@ public class SkeletonThread<T> extends Thread {
     private Skeleton<T> skeleton;
     private Socket socket;
     private volatile boolean isRunning = true;
-
-    private ThreadState threadState = ThreadState.RUNNABLE;
+    private volatile ThreadState tState = ThreadState.RUNNING;
 
     public SkeletonThread(Skeleton<T> skeleton, Socket socket) {
         this.skeleton = skeleton;
@@ -77,11 +76,11 @@ public class SkeletonThread<T> extends Thread {
     }
 
     public ThreadState getThreadState() {
-        return threadState;
+        return tState;
     }
 
-    public void setThreadState(ThreadState threadState) {
-        this.threadState = threadState;
+    public void setThreadState(ThreadState tState) {
+        this.tState = tState;
     }
 
     public Socket getSocket() {

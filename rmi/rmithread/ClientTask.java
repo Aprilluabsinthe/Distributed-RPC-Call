@@ -5,12 +5,21 @@ import rmi.Skeleton;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-
+import rmi.helper.Helper.*;
+import rmi.helper.Helper.ThreadState;
+/**
+ * The Client Task, Try to connect to the serversocket
+ * @param <T>
+ */
 public class ClientTask<T> extends Thread
 {
     private ServerSocket serversocket;
     private Skeleton<T> skeleton;
-    private volatile boolean stopped = false;
+
+//    private volatile boolean stopped = false;
+
+    private volatile ThreadState tState = ThreadState.RUNNING;
+
 
     public ClientTask(ServerSocket serversocket, Skeleton<T> skeleton){
         this.serversocket = serversocket;
@@ -18,7 +27,7 @@ public class ClientTask<T> extends Thread
     }
 
     public void run() {
-        while (!stopped) {
+        while ( tState == ThreadState.RUNNING ) {
             try {
                 Socket ss = serversocket.accept();
                 SkeletonThread newSkeleton = new SkeletonThread<>(skeleton,ss);
@@ -31,10 +40,14 @@ public class ClientTask<T> extends Thread
     }
 
     public boolean isStopped() {
-        return stopped;
+        return tState == ThreadState.STOPPED;
     }
 
-    public void setStopped(boolean b) {
-        this.stopped = b;
+    public void setThreadStatus(ThreadState ts) {
+        this.tState = ts;
+    }
+
+    public ThreadState getThreadState() {
+        return tState;
     }
 }
