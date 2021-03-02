@@ -81,38 +81,51 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
 
         else{
             try {
-                Socket socket = new Socket(getHostName(), getPort());
-                ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
-                ObjectInputStream instream = new ObjectInputStream(socket.getInputStream());
 
-                Class parameterTypes[] = method.getParameterTypes();
-                Object[] objects = new Object[]{method.getName(), args, parameterTypes};
-                outstream.writeObject(objects);
-                outstream.flush();
+                    Socket socket = new Socket(getHostName(), getPort());
+                    ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
+                    ObjectInputStream instream = new ObjectInputStream(socket.getInputStream());
+
+                    Class parameterTypes[] = method.getParameterTypes();
+                    Object[] objects = new Object[]{method.getName(), args, parameterTypes};
+                    outstream.writeObject(objects);
+                    outstream.flush();
 
 //                Message message =  new Message(objects,);
 
-                // Check if method was run successfully
-                Object data = instream.readObject();
-                Object InvokeResult = null;
+                    // Check if method was run successfully
+                    Object data = instream.readObject();
+                    Object InvokeResult = null;
+                try {
+                    /**
+                     * Check if the instram DataStatus is Valid
+                     * if not,  close all strema and socket
+                     */
+                    if (data.equals(Helper.DataStatus.INVALID)) {
+                        Object error = instream.readObject();
+                        instream.close();
+                        outstream.close();
+                        socket.close();
+                        throw (Exception) error;
+                    }
 
-//                if(checkDataType())
-                if (data.equals(Helper.DataStatus.INVALID)) {
-                    Object error = instream.readObject();
+                    /**
+                     * if the method is a void return method, will have no return value for InvokeResult
+                     */
+                    if (!method.getReturnType().equals(Void.TYPE)) {
+                        InvokeResult = instream.readObject();
+                    }
+
+                }finally{
                     instream.close();
                     outstream.close();
                     socket.close();
-                    throw (Exception) error;
                 }
-
-                if (!method.getReturnType().equals(Void.TYPE)) {
-                    InvokeResult = instream.readObject();
-                }
-                instream.close();
-                outstream.close();
-                socket.close();
                 return InvokeResult;
             } catch (Exception e) {
+                /**
+                 * Whether the method supports Exception e throw out
+                 */
                 if (Helper.methodContainsE(method,e)){
                     throw e;
                 }
