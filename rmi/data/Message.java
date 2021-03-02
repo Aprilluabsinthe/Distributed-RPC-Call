@@ -52,7 +52,7 @@ public class Message<T> implements Serializable {
 
     /**
      * Getter for Type
-     * @return type
+     * @return DataStatus type, VALID/INVALID
      */
 	public DataStatus getType() {
 		return type;

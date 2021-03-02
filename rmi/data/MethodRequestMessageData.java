@@ -42,7 +42,7 @@ public class MethodRequestMessageData implements Serializable{
 
     /**
      * Setter for Method Name
-     * @param s
+     * @param s the MethodName
      */
     public void setMethodName(String s) {
         this.methodName = s;
@@ -50,7 +50,7 @@ public class MethodRequestMessageData implements Serializable{
 
     /**
      * Setter for Parameter Types
-     * @param s
+     * @param s the parameterTypes
      */
     public void setParameterTypes(Class<?>[] s) {
         this.parameterTypes = s;
@@ -58,7 +58,7 @@ public class MethodRequestMessageData implements Serializable{
 
     /**
      * Setter for varArgs
-     * @param s
+     * @param s the agrs
      */
     public void setVarArgs(Object[] s) {
         this.varArgs = s;
@@ -66,7 +66,7 @@ public class MethodRequestMessageData implements Serializable{
 
     /**
      * Getter for Method Name
-     * @return
+     * @return String MethodName
      */
     public String getMethodName() {
         return methodName;
@@ -74,7 +74,7 @@ public class MethodRequestMessageData implements Serializable{
 
     /**
      * Getter for Parameter Types
-     * @return
+     * @return parameterTypes（Class[]）
      */
     public Class<?>[] getParameterTypes() {
         return parameterTypes;
@@ -82,7 +82,7 @@ public class MethodRequestMessageData implements Serializable{
 
     /**
      * Getter for varArgs
-     * @return
+     * @return Object[] Args
      */
     public Object[] getVarArgs() {
         return varArgs;
