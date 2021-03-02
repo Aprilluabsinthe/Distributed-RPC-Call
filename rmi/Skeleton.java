@@ -4,6 +4,7 @@ import rmi.helper.Helper;
 import rmi.rmithread.ClientTask;
 import rmi.rmithread.SkeletonThread;
 import rmi.rmithread.threadRegister;
+import rmi.helper.Helper.ThreadState;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -242,7 +243,7 @@ public class Skeleton<T>
     public synchronized void stop()  {
         System.out.println("call stop!");
         if (clientTask.isAlive()) {
-            clientTask.setStopped(true);
+            clientTask.setThreadStatus( ThreadState.STOPPED );
         }
 
         try {

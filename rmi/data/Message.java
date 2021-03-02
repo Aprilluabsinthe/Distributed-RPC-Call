@@ -17,6 +17,11 @@ public class Message<T> implements Serializable {
     private T data;
     private DataStatus type;
 
+    /**
+     * Construction Function
+     * @param data
+     * @param type
+     */
     public Message(T data, DataStatus type) {
         this.data = data;
         this.type = type;
