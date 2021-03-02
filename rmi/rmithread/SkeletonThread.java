@@ -27,14 +27,14 @@ public class SkeletonThread<T> extends Thread {
 
     @Override
     public void run() {
-        ObjectOutputStream out = null;
-        ObjectInputStream in = null;
+        ObjectOutputStream outstream = null;
+        ObjectInputStream inStream = null;
         try {
-            out = new ObjectOutputStream(socket.getOutputStream());
-            out.flush();
+            outstream = new ObjectOutputStream(socket.getOutputStream());
+            outstream.flush();
 
-            in = new ObjectInputStream(socket.getInputStream());
-            Object[] objects = (Object[]) in.readObject();
+            inStream = new ObjectInputStream(socket.getInputStream());
+            Object[] objects = (Object[]) inStream.readObject();
             String methodName = (String) objects[0];
             Object[] args = (Object[]) objects[1];
             Class params[] = (Class[]) objects[2];
@@ -44,31 +44,31 @@ public class SkeletonThread<T> extends Thread {
 
             try {
                 result = method.invoke(skeleton.getServer(), args);
-                out.writeObject(Helper.DataStatus.VALID);
+                outstream.writeObject(Helper.DataStatus.VALID);
                 Class returnType = method.getReturnType();
                 if (!returnType.equals(Void.TYPE)) {
                     if (!Helper.allThrowRMIExceptions(returnType)) {
-                        out.writeObject(result);
+                        outstream.writeObject(result);
                     } else {
                         Skeleton newSkeleton = new Skeleton(returnType, result);
                         newSkeleton.start();
-                        out.writeObject(Stub.create(returnType, newSkeleton.getAddr()));
+                        outstream.writeObject(Stub.create(returnType, newSkeleton.getAddr()));
                     }
                 }
             } catch (InvocationTargetException e) {
-                out.writeObject(Helper.DataStatus.INVALID);
-                out.writeObject(e.getTargetException());
+                outstream.writeObject(Helper.DataStatus.INVALID);
+                outstream.writeObject(e.getTargetException());
             }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             skeleton.removeThread(this);
             try {
-                if (out != null) {
-                    out.flush();
-                    out.close();
+                if (outstream != null) {
+                    outstream.flush();
+                    outstream.close();
                 }
-                if (in != null) in.close();
+                if (inStream != null) inStream.close();
                 socket.close();
             } catch (IOException e) {
                 e.printStackTrace();
