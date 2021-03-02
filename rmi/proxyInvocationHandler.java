@@ -20,27 +20,57 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
     private InetSocketAddress address;
     private Class<T> clazz;
 
+    /**
+     * Constrcution Function
+     * @param clazz
+     * @param address
+     */
     public proxyInvocationHandler(Class clazz, InetSocketAddress address ) {
         this.address = address;
         this.clazz = clazz;
     }
 
+    /**
+     * Getter for Address
+     * @return
+     */
     public InetSocketAddress getAddress() {
         return address;
     }
 
+    /**
+     * Getter for class
+     * in distinguish to <code>Class</code>
+     * @return
+     */
     public Class getClazz() {
         return clazz;
     }
 
+    /**
+     * Getter for Hostname
+     * @return
+     */
     public String getHostName(){
         return address.getHostName();
     }
 
+    /**
+     * Getter for Port
+     * @return
+     */
     public int getPort(){
         return address.getPort();
     }
 
+    /**
+     * Overide invoke for Stub proxy
+     * @param proxy
+     * @param method
+     * @param args
+     * @return
+     * @throws Throwable
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // override equals/hashcode/tostring in stub
@@ -83,7 +113,9 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
                 socket.close();
                 return InvokeResult;
             } catch (Exception e) {
-                if (Arrays.asList(method.getExceptionTypes()).contains(e.getClass())) throw e;
+                if (Helper.methodContainsE(method,e)){
+                    throw e;
+                }
                 throw new RMIException(e);
             }
         }

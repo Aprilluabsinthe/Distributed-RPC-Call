@@ -25,6 +25,22 @@ public class Helper {
         return message.getType() == DataStatus.VALID;
     }
 
+    /**
+     * Check whether an Exception can be throw
+     * by checking whether it is contained in method
+     * @param method
+     * @param e
+     * @return
+     */
+    public static boolean methodContainsE(Method method, Exception e) {
+        Class<?>[] exceptionsArr = method.getExceptionTypes();
+        List<Class<?>> exceptionsList = Arrays.asList(exceptionsArr);
+        if (!exceptionsList.contains(e.getClass())){
+            return false;
+        }
+        return true;
+    }
+
 
     public enum MessageType {
         SkeletonRequest, SkeletonResponse,
