@@ -1,45 +1,91 @@
 package rmi;
 
-import java.io.IOException;
+import rmi.helper.Helper;
+
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.Arrays;
 
-public class proxyInvocationHandler<T> implements java.lang.reflect.InvocationHandler, Serializable {
-    private static final long serialVersionUID = 3141566360570749149L;
+/**
+ * Processes a method invocation on a proxy instance and returns the result.
+ * This method will be invoked on an invocation handler when a method is invoked on a proxy instance that it is associated with.
+ */
+public class proxyInvocationHandler<T> implements InvocationHandler, Serializable {
+    private static final long serialVersionUID = 7198949874328216107L;
     private InetSocketAddress address;
+    private Class<T> clazz;
 
-    public proxyInvocationHandler(String address, int port){
-        this.address = InetSocketAddress.createUnresolved(address,port);
+    public proxyInvocationHandler(Class clazz, InetSocketAddress address ) {
+        this.address = address;
+        this.clazz = clazz;
     }
 
-    public proxyInvocationHandler(InetSocketAddress address){
-        this.address = address;
+    public InetSocketAddress getAddress() {
+        return address;
+    }
+
+    public Class getClazz() {
+        return clazz;
+    }
+
+    public String getHostName(){
+        return address.getHostName();
+    }
+
+    public int getPort(){
+        return address.getPort();
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Object invokeResult = null;
-        try{
-            Socket socket = new Socket(this.address.getHostName(), this.address.getPort());
-            ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
-            // new InputStream Object
-            ObjectInputStream instream = new ObjectInputStream(socket.getInputStream());
-            outstream.writeObject(method);
-            outstream.writeObject(args);
-            outstream.flush();
-            invokeResult = instream.readObject();
-
-            // close
-            instream.close();
-            outstream.close();
-            socket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        // override equals/hashcode/tostring in stub
+        Object override = Helper.overrideStub(this,method, args);
+        if(override!= null){
+            return override;
         }
-        return invokeResult;
+
+        else{
+            try {
+                Socket socket = new Socket(getHostName(), getPort());
+                ObjectOutputStream outstream = new ObjectOutputStream(socket.getOutputStream());
+                ObjectInputStream instream = new ObjectInputStream(socket.getInputStream());
+
+                Class parameterTypes[] = method.getParameterTypes();
+                Object[] objects = new Object[]{method.getName(), args, parameterTypes};
+                outstream.writeObject(objects);
+                outstream.flush();
+
+//                Message message =  new Message(objects,);
+
+                // Check if method was run successfully
+                Object data = instream.readObject();
+                Object InvokeResult = null;
+
+//                if(checkDataType())
+                if (data.equals(Helper.DataStatus.INVALID)) {
+                    Object error = instream.readObject();
+                    instream.close();
+                    outstream.close();
+                    socket.close();
+                    throw (Exception) error;
+                }
+
+                if (!method.getReturnType().equals(Void.TYPE)) {
+                    InvokeResult = instream.readObject();
+                }
+                instream.close();
+                outstream.close();
+                socket.close();
+                return InvokeResult;
+            } catch (Exception e) {
+                if (Arrays.asList(method.getExceptionTypes()).contains(e.getClass())) throw e;
+                throw new RMIException(e);
+            }
+        }
     }
 }
