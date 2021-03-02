@@ -10,10 +10,10 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The Helper function for the RMI Library
+ */
 public class Helper {
-
-
-
 
     public enum MessageType {
         SkeletonRequest, SkeletonResponse,
@@ -22,12 +22,17 @@ public class Helper {
     }
 
 
+    /**
+     * The DataStatus , show the message is valid or invalid
+     */
     public enum DataStatus {
         VALID,
         INVALID;
     }
 
-
+    /**
+     * The DataStatus
+     */
     public enum ThreadState {
         RUNNING,
         STOPPED;
@@ -104,7 +109,6 @@ public class Helper {
      * @param handler
      * @param method
      * @param args
-     * @param <T>
      * @return
      * @throws NoSuchMethodException
      */

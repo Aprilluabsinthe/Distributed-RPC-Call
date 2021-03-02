@@ -209,7 +209,7 @@ public class Skeleton<T>
                 throw new RMIException("Cannot create listening socket!\n");
             }
         }
-        else{ // local dummy skeleton
+        else{ // local dummy skeleton for test
             try{
                 listener = new ServerSocket(0);
                 String localhost = InetAddress.getLocalHost().getHostName();
@@ -222,7 +222,7 @@ public class Skeleton<T>
             }
         }
 
-        // If listener is still null:
+        // If listener is still null
         if (listener ==null) throw new RMIException("Cannot create listening socket!\n");
 
         // start client Task

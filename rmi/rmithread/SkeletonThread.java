@@ -12,6 +12,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.Socket;
 
+/**
+ * SkeletonThread for Skeleton
+ *
+ */
 public class SkeletonThread<T> extends Thread {
     private Skeleton<T> skeleton;
     private Socket socket;
@@ -24,6 +28,10 @@ public class SkeletonThread<T> extends Thread {
         skeleton.addThread(this);
     }
 
+    /**
+     * Override the run function
+     * resoponse to the Stub.Proxy
+     */
     @Override
     public void run() {
         ObjectOutputStream outstream = null;
@@ -75,14 +83,26 @@ public class SkeletonThread<T> extends Thread {
         }
     }
 
+    /**
+     * get ThreadState of the
+     * @return ThreadState
+     */
     public ThreadState getThreadState() {
         return tState;
     }
 
+    /**
+     * set the ThreadState
+     * @param tState ThreadState
+     */
     public void setThreadState(ThreadState tState) {
         this.tState = tState;
     }
 
+    /**
+     * get the Socket the Thread
+     * @return Socket of the Thread
+     */
     public Socket getSocket() {
         return socket;
     }
