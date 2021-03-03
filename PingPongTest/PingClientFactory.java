@@ -1,4 +1,4 @@
-package PingPongTest;
+package pingpongtest;
 
 import rmi.RMIException;
 import rmi.Stub;
@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 
 /**
  * Similar to PingServerFactory, the Factory for Client PingServer
- * @author Di Lu
+ * @author Di Lu, Yuan Gu
  * <p>
  *     Factory for client to generate a PingServer, which needs to initiate a Proxy
  *     given the address(hostname and port)
@@ -37,12 +37,14 @@ public class PingClientFactory{
      * @param port
      * @return PingServer pingStub
      */
-
     public static PingServer initProxy(String hostname, int port){
-        InetSocketAddress address = InetSocketAddress.createUnresolved(hostname, port);
+        InetSocketAddress address = new InetSocketAddress(hostname, port);
+        System.out.println(address);
         ServerFactoryInterface StubFactory = null;
         try{
+            // System.out.println("hi1");
             StubFactory = Stub.create(ServerFactoryInterface.class,address);
+            // System.out.println("hi2");
         }catch(Exception e){
             System.out.println(e.getMessage());
             e.printStackTrace();
@@ -50,8 +52,11 @@ public class PingClientFactory{
             System.err.println(err.getMessage());
         }
 
+        System.out.println("complete");
+
         PingServer pingStub = null;
         try {
+            // System.out.println("try...");
             pingStub = StubFactory.makePingServer();
         }catch(RMIException | UnknownHostException e){
             System.out.println(e.getMessage());

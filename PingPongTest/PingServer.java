@@ -1,4 +1,4 @@
-package PingPongTest;
+package pingpongtest;
 import rmi.RMIException;
 
 /**

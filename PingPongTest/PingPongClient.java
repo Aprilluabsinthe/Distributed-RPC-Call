@@ -1,12 +1,12 @@
-package PingPongTest;
+package pingpongtest;
 
-import rmi.RMIException;
+import rmi.*;
 
 import java.net.UnknownHostException;
 
 /**
  * PingPong Client
- * @author Di Lu
+ * @author Di Lu, Yuan Gu
  * <p>
  *     the Java class that represents the actual server machine
  */
@@ -22,11 +22,12 @@ public class PingPongClient {
      * @throws UnknownHostException
      */
     public static void main(String[] args) throws RMIException, UnknownHostException {
-        if(args.length < 2){
-            System.err.println("Expecting hostname and address");
+        if(args.length < 3){
+            System.err.println("Expecting hostname, address and Numbers sending");
         }
         String hostname = args[0];
         int port = Integer.parseInt(args[1]);
+        int number = Integer.parseInt(args[2]);
         PingServer pingStub = PingClientFactory.initProxy(hostname,port);
         System.out.println("Print PingPong Result");
         testContent(pingStub,2);

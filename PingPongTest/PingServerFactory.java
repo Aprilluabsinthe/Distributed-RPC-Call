@@ -1,4 +1,4 @@
-package PingPongTest;
+package pingpongtest;
 
 import rmi.RMIException;
 import rmi.Skeleton;
@@ -25,10 +25,15 @@ public class PingServerFactory implements ServerFactoryInterface {
      */
     @Override
     public PingServer makePingServer() throws RMIException, UnknownHostException {
+        //System.out.println("make ping success");
         PingPongServer serverPingServer = new PingPongServer();
+        //System.out.println("make ping success");
         Skeleton<PingServer> skeleton = new Skeleton<>(PingServer.class, serverPingServer);
+        //System.out.println("make ping success");
         skeleton.start();
+        //System.out.println("make ping success");
         PingServer ppstub = Stub.create(PingServer.class,skeleton);
+        //System.out.println("make ping success");
         return ppstub;
     }
 
@@ -42,6 +47,7 @@ public class PingServerFactory implements ServerFactoryInterface {
      * @throws RMIException
      * @throws UnknownHostException
      */
+    /*
     public static void main(String[] args) throws RMIException, UnknownHostException {
         if(args.length < 1){
             System.err.println("Expecting Port");
@@ -55,6 +61,6 @@ public class PingServerFactory implements ServerFactoryInterface {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

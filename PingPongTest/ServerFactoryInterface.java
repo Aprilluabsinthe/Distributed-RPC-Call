@@ -1,4 +1,4 @@
-package PingPongTest;
+package pingpongtest;
 
 import rmi.RMIException;
 
@@ -10,7 +10,7 @@ import java.net.UnknownHostException;
  * <p>
  *     The Interface is used for getting interfaces <code> Class<T> c </code>
  *     To get Class Interfaces, call FactoryInterfaces.class
- * @author Di Lu
+ * @author Di Lu, Yuan Gu
  * @throws RMIException
  * @throws UnknownHostException
  */

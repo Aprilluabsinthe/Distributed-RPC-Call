@@ -1,12 +1,14 @@
-package PingPongTest;
+package pingpongtest;
 
 import rmi.RMIException;
-
+import rmi.Skeleton;
+import java.net.*;
 import java.io.Serializable;
 
 /**
  * PingPongServer
  * the Java class that represents the actual server machine
+ * @author Di Lu, Yuan Gu
  */
 
 public class PingPongServer implements PingServer, Serializable {
@@ -24,5 +26,20 @@ public class PingPongServer implements PingServer, Serializable {
     public String ping(int idNumber) throws RMIException {
         String result = "Pong" + Integer.toString(idNumber);
         return result;
+    }
+
+    public static void main(String[] args) throws RMIException, UnknownHostException {
+        if(args.length < 1){
+            System.err.println("Expecting Port");
+        }
+        InetSocketAddress address = new InetSocketAddress(Integer.parseInt(args[0]));
+        PingServerFactory factory = new PingServerFactory();
+        Skeleton<ServerFactoryInterface> skeleton = new Skeleton<>(ServerFactoryInterface.class, factory, address);
+        try{
+            skeleton.start();
+        }catch(RMIException e){
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
     }
 }
