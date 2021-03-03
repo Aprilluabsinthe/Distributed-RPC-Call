@@ -34,6 +34,8 @@ import java.util.Objects;
  The skeleton's response to these exceptions can be customized by deriving
  a class from <code>Skeleton</code> and overriding <code>listen_error</code>
  or <code>service_error</code>.
+
+ @author Di Lu, Yuan Gu
  */
 public class Skeleton<T>
 {
@@ -78,6 +80,7 @@ public class Skeleton<T>
         }
         this.c = c;
         this.server = server;
+        //System.out.println("server skeleton is created.");
     }
 
     /** Creates a <code>Skeleton</code> with the given initial server address.
@@ -214,6 +217,7 @@ public class Skeleton<T>
                 listener = new ServerSocket(0);
                 String localhost = InetAddress.getLocalHost().getHostName();
                 int localPort = listener.getLocalPort();
+                
                 address = InetSocketAddress.createUnresolved(localhost,localPort);
             }catch(UnknownHostException e){
                 e.printStackTrace();
@@ -241,7 +245,7 @@ public class Skeleton<T>
      restarted.
      */
     public synchronized void stop()  {
-        System.out.println("call stop!");
+        //System.out.println("call stop!");
         if (clientTask.isAlive()) {
             clientTask.setThreadStatus( ThreadState.STOPPED );
         }

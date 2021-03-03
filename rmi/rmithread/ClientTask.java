@@ -10,6 +10,7 @@ import rmi.helper.Helper.ThreadState;
 /**
  * The Client Task, Try to connect to the serversocket
  * Everytime a new Task comes, it will apply for a new SkeletonThread
+ * @author Di Lu, Yuan Gu
  */
 public class ClientTask<T> extends Thread
 {

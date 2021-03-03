@@ -88,6 +88,7 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
 
                     Class parameterTypes[] = method.getParameterTypes();
                     Object[] objects = new Object[]{method.getName(), args, parameterTypes};
+
                     outstream.writeObject(objects);
                     outstream.flush();
 

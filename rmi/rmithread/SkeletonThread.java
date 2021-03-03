@@ -14,7 +14,7 @@ import java.net.Socket;
 
 /**
  * SkeletonThread for Skeleton
- *
+ * @author Yuan Gu, Di Lu
  */
 public class SkeletonThread<T> extends Thread {
     private Skeleton<T> skeleton;

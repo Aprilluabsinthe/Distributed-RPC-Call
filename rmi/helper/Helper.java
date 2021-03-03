@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * The Helper function for the RMI Library
+ * @author Di Lu, Yuan Gu
  */
 public class Helper {
 

@@ -9,6 +9,7 @@ import java.util.Map;
  * The Register for threads
  * in essencial is a HashMap, storing the sockt ad skeletonThread
  * Every Skeleton will maintain a threadRegister
+ * @author Yuan Gu, Di Lu
  */
 public class threadRegister<T> {
     private volatile Map<Socket, SkeletonThread<T>> map = new HashMap<>();

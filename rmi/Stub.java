@@ -5,6 +5,7 @@ import rmi.helper.Helper;
 import java.lang.reflect.Proxy;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.io.Serializable;
 
 import static rmi.helper.Helper.allThrowRMIExceptions;
 
@@ -21,7 +22,7 @@ import static rmi.helper.Helper.allThrowRMIExceptions;
  same interface and carry the same remote server address - and would
  therefore connect to the same skeleton. Stubs are serializable.
  */
-public class Stub {
+public class Stub implements Serializable{
     /** Creates a stub, given a skeleton with an assigned adress.
 
      <p>
@@ -38,7 +39,7 @@ public class Stub {
      implemented by the remote object.
      @param skeleton The skeleton whose network address is to be used.
      @return The stub created.
-     @throws IllegalStateException If the skeleton has not been assigned an
+     @throws IllegalStateException If the skeleton has not been assigned aßn
      address by the user and has not yet been
      started.
      @throws UnknownHostException When the skeleton address is a wildcard and
@@ -152,6 +153,7 @@ public class Stub {
      */
     public static <T> T create(Class<T> c, InetSocketAddress address)
     {
+        //System.out.println("bbbb");
         if(c == null || address == null){
             throw new NullPointerException("interface or server is null");
         }
@@ -161,9 +163,11 @@ public class Stub {
         }
 
         try{
+            System.out.println("bbbc");
             return callStubProxy(c,address);
         }
         catch (Exception e) {
+            //throw new UnsupportedOperationException("not implemented");
             throw new UnsupportedOperationException("not implemented");
         }
 
