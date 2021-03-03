@@ -1,0 +1,1 @@
+typeSearchIndex = [{"p":"rmi","l":"proxyInvocationHandler"},{"p":"rmi","l":"RMIException"},{"p":"rmi","l":"Skeleton"},{"p":"rmi","l":"Stub"}]

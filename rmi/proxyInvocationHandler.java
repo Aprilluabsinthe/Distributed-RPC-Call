@@ -22,8 +22,8 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
 
     /**
      * Constrcution Function
-     * @param clazz
-     * @param address
+     * @param clazz class 
+     * @param address address
      */
     public proxyInvocationHandler(Class clazz, InetSocketAddress address ) {
         this.address = address;
@@ -32,7 +32,7 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
 
     /**
      * Getter for Address
-     * @return
+     * @return the address
      */
     public InetSocketAddress getAddress() {
         return address;
@@ -49,7 +49,7 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
 
     /**
      * Getter for Hostname
-     * @return
+     * @return the host name
      */
     public String getHostName(){
         return address.getHostName();
@@ -57,7 +57,7 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
 
     /**
      * Getter for Port
-     * @return
+     * @return the port
      */
     public int getPort(){
         return address.getPort();
@@ -65,11 +65,11 @@ public class proxyInvocationHandler<T> implements InvocationHandler, Serializabl
 
     /**
      * Overide invoke for Stub proxy
-     * @param proxy
-     * @param method
-     * @param args
-     * @return
-     * @throws Throwable
+     * @param proxy the proxy object
+     * @param method the method invoked
+     * @param args the method's arguments
+     * @return invoked result
+     * @throws Throwable throw exceptions
      */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {

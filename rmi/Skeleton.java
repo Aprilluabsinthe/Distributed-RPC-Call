@@ -269,7 +269,7 @@ public class Skeleton<T>
 
     /**
      * Setter for InetSocketAddress Address
-     * @param address
+     * @param address address
      */
     public void setAddr(InetSocketAddress address) {
         this.address = address;
@@ -302,7 +302,7 @@ public class Skeleton<T>
 
     /**
      * Setter for interfaces <code>c</code>
-     * @param claz
+     * @param claz class
      */
     public void setClass(Class<T> claz) {
         this.c = claz;
@@ -318,7 +318,7 @@ public class Skeleton<T>
 
     /**
      * Setter for server
-     * @param server
+     * @param server the server
      */
     public void setServer(T server) {
         this.server = server;
@@ -340,7 +340,7 @@ public class Skeleton<T>
     /**
      * Methods to maintain a Thread Set
      * Remove task from set
-     * @param tSkeletonThread
+     * @param tSkeletonThread skeleton thread
      */
     public void removeThread(SkeletonThread<T> tSkeletonThread) {
         threadRegister.removeClientTask(tSkeletonThread.getSocket());
@@ -349,7 +349,7 @@ public class Skeleton<T>
     /**
      * Methods to maintain a Thread Set
      * add task to set
-     * @param tSkeletonThread
+     * @param tSkeletonThread skeleton thread
      */
     public void addThread(SkeletonThread<T> tSkeletonThread) {
         threadRegister.addClientTask(tSkeletonThread.getSocket(),tSkeletonThread);
